@@ -1,15 +1,16 @@
 import express from 'express';
 import mongoose, { mongo } from 'mongoose';
 import bodyParser from 'body-parser';
-// import cors from 'cors';
-// app.use(cors());
+import cors from 'cors';
+
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 mongoose.connect('<db_connection_string>');
 
-const Task = mongoose.model('Task', { title: String, description: String, status: String, createtedAt: Date, updatedAt: Date });
+const Task = mongoose.model('Task', { title: String, description: String, status: String, createdAt: Date, updatedAt: Date });
 // const User = mongoose.model('User', { name: String, email: String });
 
 app.get('/tasks', async (req, res) => {
@@ -17,7 +18,7 @@ app.get('/tasks', async (req, res) => {
 });
 
 app.post('/tasks', async (req, res) => {
-  const task = new Task({ title: req.body.title, description: req.body.description, status: req.body.status, createtedAt: new Date(), updatedAt: new Date() });
+  const task = new Task({ title: req.body.title, description: req.body.description, status: req.body.status, createdAt: new Date(), updatedAt: new Date() });
   await task.save();
   res.send('Task created!');
 });
@@ -32,4 +33,7 @@ app.delete('/tasks/:id', async (req, res) => {
   res.send(`Task with ID ${req.params.id} deleted!`);
 });
 
-app.listen(3000);
+const port = 3000;
+app.listen(port, () => {
+  console.log(`App listening at http://localhost:${port}/tasks`);
+});

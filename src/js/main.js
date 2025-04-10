@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // DOM Elements
     const taskForm = document.getElementById('taskForm');
     const titleInput = document.getElementById('title');
     const descriptionInput = document.getElementById('description');
@@ -9,22 +8,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const activeTasksBtn = document.getElementById('activeTasks');
     const completedTasksBtn = document.getElementById('completedTasks');
     
-    // API Base URL
-    const API_BASE_URL = 'http://localhost:3000'; // Update if your API is hosted elsewhere
+    const API_BASE_URL = 'http://localhost:3000';
     
-    // Current filter state
     let currentFilter = 'all';
     
-    // Event Listeners
     taskForm.addEventListener('submit', handleFormSubmit);
     allTasksBtn.addEventListener('click', () => filterTasks('all'));
     activeTasksBtn.addEventListener('click', () => filterTasks('active'));
     completedTasksBtn.addEventListener('click', () => filterTasks('completed'));
     
-    // Initial load
     fetchTasks();
     
-    // Form submission handler
     function handleFormSubmit(e) {
         e.preventDefault();
         
@@ -36,11 +30,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         addTask(newTask);
         
-        // Reset form
         taskForm.reset();
     }
     
-    // Fetch tasks from API
     async function fetchTasks() {
         try {
             const response = await fetch(`${API_BASE_URL}/tasks`);
@@ -55,7 +47,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Add a new task
     async function addTask(task) {
         try {
             const response = await fetch(`${API_BASE_URL}/tasks`, {
@@ -70,7 +61,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error('Failed to add task');
             }
             
-            // Refresh the task list
             fetchTasks();
         } catch (error) {
             console.error('Error adding task:', error);
@@ -78,7 +68,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Update task status
     async function updateTaskStatus(taskId, newStatus) {
         try {
             const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`, {
@@ -93,7 +82,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error('Failed to update task');
             }
             
-            // Refresh the task list
             fetchTasks();
         } catch (error) {
             console.error('Error updating task:', error);
@@ -101,7 +89,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Delete a task
     async function deleteTask(taskId) {
         try {
             const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`, {
@@ -112,7 +99,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error('Failed to delete task');
             }
             
-            // Refresh the task list
             fetchTasks();
         } catch (error) {
             console.error('Error deleting task:', error);
@@ -120,9 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Render tasks to the DOM
     function renderTasks(tasks) {
-        // Filter tasks based on current filter
         let filteredTasks = tasks;
         if (currentFilter === 'active') {
             filteredTasks = tasks.filter(task => task.status === 'active');
@@ -137,7 +121,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         tasksContainer.innerHTML = '';
         
-        // Sort tasks by createdAt date (newest first)
         filteredTasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         
         filteredTasks.forEach(task => {
@@ -166,7 +149,6 @@ document.addEventListener('DOMContentLoaded', function() {
             tasksContainer.appendChild(taskElement);
         });
         
-        // Add event listeners to the new buttons
         document.querySelectorAll('.toggle-status').forEach(button => {
             button.addEventListener('click', function() {
                 const taskId = this.getAttribute('data-id');
@@ -186,11 +168,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Filter tasks
     function filterTasks(filter) {
         currentFilter = filter;
         
-        // Update active button
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.classList.remove('active');
         });
@@ -203,11 +183,9 @@ document.addEventListener('DOMContentLoaded', function() {
             completedTasksBtn.classList.add('active');
         }
         
-        // Refresh tasks to apply filter
         fetchTasks();
     }
     
-    // Helper function to format dates
     function formatDate(dateString) {
         if (!dateString) return '';
         const date = new Date(dateString);
