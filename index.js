@@ -2,16 +2,24 @@ import express from 'express';
 import mongoose, { mongo } from 'mongoose';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'src')));
 
 mongoose.connect('<db_connection_string>');
 
 const Task = mongoose.model('Task', { title: String, description: String, status: String, createdAt: Date, updatedAt: Date });
 // const User = mongoose.model('User', { name: String, email: String });
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'src', 'index.html'));
+});
 
 app.get('/tasks', async (req, res) => {
   res.json(await Task.find({}));
